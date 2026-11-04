@@ -106,4 +106,3 @@ Use la URL local que indique la consola o el perfil de ejecución de Visual Stud
 
 - La solución contiene tres proyectos: `SistemaCableInternet` (presentación), `SistemaCableInternet.BLL` (lógica de negocio) y `SistemaCableInternet.DAL` (acceso a datos).
 - Los directorios generados por Visual Studio y .NET (`bin`, `obj`, `.vs`) se excluyen del control de versiones.
-- Los reportes de Power BI no se incluyen en este paquete porque no venían dentro del ZIP recibido.

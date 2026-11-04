@@ -1,0 +1,153 @@
+﻿@model List<SistemaCableInternet.BLL.Models.Direccion>
+
+@{
+    ViewData["Title"] = "Direcciones de Instalación";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Direcciones de Instalación</h2>
+            <p class="text-muted">Administración de las ubicaciones de instalación.</p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary">
+            Nueva Dirección
+        </a>
+    </div>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Mensaje"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form asp-action="Index" method="get">
+                <div class="row">
+
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">Buscar dirección</label>
+
+                        <input type="text"
+                               name="buscar"
+                               value="@ViewBag.Buscar"
+                               class="form-control"
+                               placeholder="Ingrese una dirección" />
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Contrato</label>
+
+                        <select name="contratoId"
+                                class="form-select"
+                                asp-items="ViewBag.Contratos">
+                            <option value="">Todos los contratos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Zona</label>
+
+                        <select name="zonaId"
+                                class="form-select"
+                                asp-items="ViewBag.Zonas">
+                            <option value="">Todas las zonas</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 mb-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-dark w-100">
+                            Buscar
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Contrato</th>
+                            <th>Zona</th>
+                            <th>Dirección</th>
+                            <th>Estado del contrato</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var direccion in Model)
+                            {
+                                <tr>
+                                    <td>@direccion.DireccionId</td>
+                                    <td>#@direccion.ContratoId</td>
+                                    <td>@direccion.Zona</td>
+                                    <td>@direccion.DireccionTexto</td>
+                                    <td>
+                                        @if (direccion.EstadoContrato == "Activo")
+                                        {
+                                            <span class="badge bg-success">Activo</span>
+                                        }
+                                        else if (direccion.EstadoContrato == "Suspendido")
+                                        {
+                                            <span class="badge bg-warning text-dark">Suspendido</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @direccion.EstadoContrato
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@direccion.DireccionId"
+                                           class="btn btn-sm btn-warning">
+                                            Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    No hay direcciones registradas.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+

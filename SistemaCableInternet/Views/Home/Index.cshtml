@@ -1,0 +1,260 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<style>
+    .dashboard {
+        padding: 20px 10px 40px;
+        color: #26354a;
+    }
+
+    .welcome {
+        background: linear-gradient(120deg, #172b4d, #2463a6);
+        color: white;
+        padding: 38px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(23,43,77,.15);
+    }
+
+    .welcome h1 {
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .welcome p {
+        color: #dce8f7;
+        font-size: 15px;
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 30px 0 18px;
+    }
+
+    .module-card {
+        display: block;
+        height: 100%;
+        padding: 24px;
+        background: white;
+        border: 1px solid #e8edf3;
+        border-radius: 13px;
+        text-decoration: none;
+        color: #26354a;
+        transition: .25s ease;
+        box-shadow: 0 3px 12px rgba(0,0,0,.035);
+    }
+
+    .module-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.09);
+        color: #2463a6;
+        border-color: #b9d1ef;
+    }
+
+    .module-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #edf4fc;
+        color: #2463a6;
+        font-size: 23px;
+        margin-bottom: 17px;
+    }
+
+    .module-card h5 {
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .module-card p {
+        color: #7b8797;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .welcome-label {
+        display: inline-block;
+        background: rgba(255,255,255,.15);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+
+    .system-info {
+        background: #fff;
+        border: 1px solid #e8edf3;
+        border-radius: 13px;
+        padding: 20px;
+        margin-top: 30px;
+        color: #64748b;
+        font-size: 13px;
+    }
+</style>
+
+<div class="dashboard">
+
+    <!-- BIENVENIDA -->
+    <div class="welcome">
+        <span class="welcome-label">
+            <i class="bi bi-wifi"></i> SISTEMA DE GESTIÓN
+        </span>
+
+        <h1>Bienvenido al Sistema Cable e Internet por Joel Castillo</h1>
+
+        <p>
+            Plataforma de administración y control de clientes,
+            contratos, servicios.
+        </p>
+
+        <div class="mt-4">
+            <span class="me-3">
+                <i class="bi bi-calendar3"></i>
+                @DateTime.Now.ToString("dd/MM/yyyy")
+            </span>
+            <span>
+                <i class="bi bi-clock"></i>
+                @DateTime.Now.ToString("hh:mm tt")
+            </span>
+        </div>
+    </div>
+
+    <!-- ADMINISTRACIÓN -->
+    <h4 class="section-title">
+        <i class="bi bi-grid-fill me-2"></i>
+        Administración del sistema
+    </h4>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Clientes" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-people"></i></div>
+                <h5>Clientes</h5>
+                <p>Registro y administración de clientes.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Contratos" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-file-earmark-text"></i></div>
+                <h5>Contratos</h5>
+                <p>Consulta y gestión de contratos.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Servicios" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-router"></i></div>
+                <h5>Servicios</h5>
+                <p>Administración de servicios disponibles.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Planes" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-box-seam"></i></div>
+                <h5>Planes</h5>
+                <p>Configuración de planes comerciales.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Zonas" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-geo-alt"></i></div>
+                <h5>Zonas</h5>
+                <p>Administración de zonas de cobertura.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Direcciones" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-geo"></i></div>
+                <h5>Direcciones</h5>
+                <p>Direcciones de instalación de clientes.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="ContratoServicios" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-diagram-3"></i></div>
+                <h5>Servicios contratados</h5>
+                <p>Asignación y control de servicios.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Tarifas" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-currency-dollar"></i></div>
+                <h5>Tarifas</h5>
+                <p>Precios y vigencias por zona y plan.</p>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- FACTURACIÓN -->
+    <!--<h4 class="section-title">
+        <i class="bi bi-receipt me-2"></i>
+        Gestión financiera
+    </h4>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Facturas" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-receipt-cutoff"></i></div>
+                <h5>Facturación</h5>
+                <p>Consulta y administración de facturas.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Pagos" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-cash-stack"></i></div>
+                <h5>Pagos</h5>
+                <p>Control de pagos realizados por clientes.</p>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Reportes" asp-action="Index"
+               class="module-card">
+                <div class="module-icon"><i class="bi bi-bar-chart"></i></div>
+                <h5>Reportes</h5>
+                <p>Información e indicadores del negocio.</p>
+            </a>
+        </div>
+
+    </div>-->
+
+    <!-- INFORMACIÓN -->
+    <div class="system-info">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <span>
+                <i class="bi bi-shield-check me-1"></i>
+                Sistema de Gestión Cable e Internet
+            </span>
+            <span>Versión 1.0</span>
+        </div>
+    </div>
+
+</div>
+

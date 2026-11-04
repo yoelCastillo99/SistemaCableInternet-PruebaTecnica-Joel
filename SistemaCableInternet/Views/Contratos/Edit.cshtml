@@ -1,0 +1,132 @@
+﻿@model SistemaCableInternet.BLL.Models.Contrato
+
+@{
+    ViewData["Title"] = "Editar Contrato";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h2>Editar Contrato</h2>
+        <p class="text-muted">
+            Modifique la información del contrato seleccionado.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="ContratoId" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger">
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="ClienteId" class="form-label">
+                            Cliente
+                        </label>
+
+                        <select asp-for="ClienteId"
+                                asp-items="ViewBag.Clientes"
+                                class="form-select">
+                            <option value="">Seleccione un cliente</option>
+                        </select>
+
+                        <span asp-validation-for="ClienteId"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FechaInicio" class="form-label">
+                            Fecha de inicio
+                        </label>
+
+                        <input asp-for="FechaInicio"
+                               type="date"
+                               class="form-control" />
+
+                        <span asp-validation-for="FechaInicio"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FechaFin" class="form-label">
+                            Fecha de finalización (opcional)
+                        </label>
+
+                        <input asp-for="FechaFin"
+                               type="date"
+                               class="form-control" />
+
+                        <span asp-validation-for="FechaFin"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DiaPago" class="form-label">
+                            Día de pago
+                        </label>
+
+                        <input asp-for="DiaPago"
+                               type="number"
+                               min="1"
+                               max="31"
+                               class="form-control" />
+
+                        <span asp-validation-for="DiaPago"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Estado actual</label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@Model.Estado"
+                               readonly />
+
+                        <small class="text-muted">
+                            El estado se modifica desde el listado de contratos.
+                        </small>
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary">
+                        Guardar Cambios
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

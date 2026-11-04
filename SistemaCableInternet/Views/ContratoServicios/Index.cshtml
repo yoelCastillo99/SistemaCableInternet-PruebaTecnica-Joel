@@ -1,0 +1,207 @@
+﻿@model IEnumerable<SistemaCableInternet.BLL.Models.ContratoServicio>
+
+@{
+    ViewData["Title"] = "Servicios Contratados";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Servicios Contratados</h2>
+            <p class="text-muted">Administración de servicios asignados a los clientes.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Asignar Servicio
+        </a>
+    </div>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <strong>Filtros de búsqueda</strong>
+        </div>
+        <div class="card-body">
+            <form asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Contrato ID</label>
+                        <input type="number" name="contratoId"
+                               value="@ViewBag.ContratoId"
+                               class="form-control"
+                               min="1"
+                               placeholder="Número de contrato" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Cliente ID</label>
+                        <input type="number" name="clienteId"
+                               value="@Context.Request.Query["clienteId"]"
+                               class="form-control"
+                               min="1"
+                               placeholder="Número de cliente" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Estado</label>
+                        <select name="estado" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="Activo" selected="@(ViewBag.Estado?.ToString() == "Activo")">Activo</option>
+                            <option value="Suspendido" selected="@(ViewBag.Estado?.ToString() == "Suspendido")">Suspendido</option>
+                            <option value="Finalizado" selected="@(ViewBag.Estado?.ToString() == "Finalizado")">Finalizado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Limpiar
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <strong>Listado de servicios contratados</strong>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Contrato</th>
+                            <th>Servicio</th>
+                            <th>Plan</th>
+                            <th>Dirección</th>
+                            <th>Zona</th>
+                            <th>Precio mensual</th>
+                            <th>Velocidad</th>
+                            <th>Fecha alta</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.ContratoServicioId</td>
+                                    <td>
+                                        <strong>@item.CodigoCliente</strong><br />
+                                        <small>@item.NombreCliente</small>
+                                    </td>
+                                    <td>@item.ContratoId</td>
+                                    <td>@item.Servicio</td>
+                                    <td>@item.NombrePlan</td>
+                                    <td>@item.Direccion</td>
+                                    <td>@item.Zona</td>
+                                    <td>Q @item.PrecioPactado.ToString("N2")</td>
+                                    <td>
+                                        @if (item.VelocidadActualMbps.HasValue)
+                                        {
+                                            <span>@item.VelocidadActualMbps Mbps</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>@item.FechaAlta.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (item.Estado == "Activo")
+                                        {
+                                            <span class="badge bg-success">Activo</span>
+                                        }
+                                        else if (item.Estado == "Suspendido")
+                                        {
+                                            <span class="badge bg-warning text-dark">Suspendido</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Finalizado</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.ContratoServicioId"
+                                               class="btn btn-sm btn-warning"
+                                               title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+                                            @if (item.Estado != "Finalizado")
+                                            {
+                                                <form asp-action="CambiarEstado" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id"
+                                                           value="@item.ContratoServicioId" />
+
+                                                    <input type="hidden" name="estado"
+                                                           value="@(item.Estado == "Activo" ? "Suspendido" : "Activo")" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm @(item.Estado == "Activo" ? "btn-danger" : "btn-success")"
+                                                            title="@(item.Estado == "Activo" ? "Suspender" : "Activar")"
+                                                            onclick="return confirm('¿Desea cambiar el estado de este servicio?');">
+                                                        <i class="bi @(item.Estado == "Activo" ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                                    </button>
+                                                </form>
+
+                                                <form asp-action="CambiarEstado" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id"
+                                                           value="@item.ContratoServicioId" />
+                                                    <input type="hidden" name="estado"
+                                                           value="Finalizado" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-dark"
+                                                            title="Finalizar"
+                                                            onclick="return confirm('¿Está seguro de finalizar este servicio?');">
+                                                        <i class="bi bi-x-circle"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="12" class="text-center text-muted py-4">
+                                    No hay servicios contratados registrados.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

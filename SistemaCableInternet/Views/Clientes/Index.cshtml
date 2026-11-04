@@ -1,0 +1,246 @@
+﻿@model List<SistemaCableInternet.BLL.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Administración de Clientes";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Administración de Clientes</h2>
+            <p class="text-muted">
+                Gestión de clientes del sistema de cable e internet.
+            </p>
+        </div>
+
+        <a asp-controller="Clientes"
+           asp-action="Create"
+           class="btn btn-primary">
+            + Nuevo Cliente
+        </a>
+    </div>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Mensaje"]
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- BUSCADOR Y FILTROS -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form asp-controller="Clientes"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Buscar cliente
+                        </label>
+
+                        <input type="text"
+                               name="buscar"
+                               value="@ViewBag.Buscar"
+                               class="form-control"
+                               placeholder="Código, nombre o correo..." />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            Estado
+                        </label>
+
+                        <select name="activo" class="form-select">
+                            <option value="">Todos</option>
+
+                            @if (ViewBag.Activo != null &&
+                                                        (bool)ViewBag.Activo == true)
+                            {
+                                <option value="true" selected>Activos</option>
+                            }
+                            else
+                            {
+                                <option value="true">Activos</option>
+                            }
+
+                            @if (ViewBag.Activo != null &&
+                                                        (bool)ViewBag.Activo == false)
+                            {
+                                <option value="false" selected>Inactivos</option>
+                            }
+                            else
+                            {
+                                <option value="false">Inactivos</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Buscar
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+                            Limpiar
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- TABLA DE CLIENTES -->
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Listado de clientes</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Fecha de alta</th>
+                            <th>Dirección</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var cliente in Model)
+                            {
+                                <tr>
+                                    <td>@cliente.ClienteId</td>
+                                    <td>@cliente.Codigo</td>
+                                    <td>@cliente.Nombre</td>
+                                    <td>
+                                        @cliente.FechaAlta.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>@cliente.Direccion</td>
+                                    <td>@cliente.Correo</td>
+                                    <td>@cliente.Telefono</td>
+
+                                    <td>
+                                        @if (cliente.Activo)
+                                        {
+                                            <span class="badge bg-success">
+                                                Activo
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                Inactivo
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex gap-2">
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@cliente.ClienteId"
+                                               class="btn btn-sm btn-warning">
+                                                Editar
+                                            </a>
+
+
+                                            <form asp-controller="Clientes"
+                                                  asp-action="CambiarEstado"
+                                                  method="post">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@cliente.ClienteId" />
+
+                                                @if (cliente.Activo)
+                                                {
+                                                    <input type="hidden"
+                                                           name="activo"
+                                                           value="false" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-danger">
+                                                        Desactivar
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <input type="hidden"
+                                                           name="activo"
+                                                           value="true" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-success">
+                                                        Activar
+                                                    </button>
+                                                }
+
+                                            </form>
+
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9"
+                                    class="text-center text-muted py-4">
+                                    No se encontraron clientes registrados.
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="text-muted">
+                Total de clientes encontrados: @(Model?.Count ?? 0)
+            </div>
+
+        </div>
+    </div>
+
+</div>
+

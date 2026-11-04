@@ -1,0 +1,296 @@
+﻿@model SistemaCableInternet.BLL.Models.ContratoServicio
+
+@{
+    ViewData["Title"] = "Asignar Servicio";
+}
+
+<div class="container mt-4">
+    <div class="mb-4">
+        <h2>Asignar Servicio a Contrato</h2>
+        <p class="text-muted">Registra un nuevo servicio para un cliente.</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <strong>Información de la asignación</strong>
+        </div>
+
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ContratoId" class="form-label">Contrato</label>
+                        <select asp-for="ContratoId"
+                                asp-items="ViewBag.Contratos"
+                                class="form-select"
+                                id="ContratoId">
+                            <option value="">Seleccione un contrato</option>
+                        </select>
+                        <span asp-validation-for="ContratoId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DireccionId" class="form-label">Dirección de instalación</label>
+                        <select asp-for="DireccionId"
+                                asp-items="ViewBag.Direcciones"
+                                class="form-select"
+                                id="DireccionId">
+                            <option value="">Seleccione una dirección</option>
+                        </select>
+                        <span asp-validation-for="DireccionId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ServicioId" class="form-label">Servicio</label>
+                        <select asp-for="ServicioId"
+                                asp-items="ViewBag.Servicios"
+                                class="form-select"
+                                id="ServicioId">
+                            <option value="">Seleccione un servicio</option>
+                        </select>
+                        <span asp-validation-for="ServicioId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PlanId" class="form-label">Plan</label>
+                        <select asp-for="PlanId"
+                                asp-items="ViewBag.Planes"
+                                class="form-select"
+                                id="PlanId">
+                            <option value="">Seleccione un plan</option>
+                        </select>
+                        <span asp-validation-for="PlanId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TarifaId" class="form-label">Tarifa vigente</label>
+                        <select asp-for="TarifaId"
+                                asp-items="ViewBag.Tarifas"
+                                class="form-select"
+                                id="TarifaId">
+                            <option value="">Seleccione una tarifa</option>
+                        </select>
+                        <span asp-validation-for="TarifaId"
+                              class="text-danger"></span>
+                        <small class="text-muted">
+                            Las tarifas dependen del plan y la zona de instalación.
+                        </small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Precio mensual</label>
+                        <input type="text"
+                               id="PrecioMensual"
+                               class="form-control"
+                               readonly
+                               placeholder="Se mostrará al seleccionar una tarifa" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FechaAlta" class="form-label">Fecha de alta</label>
+                        <input asp-for="FechaAlta"
+                               type="date"
+                               asp-format="{0:yyyy-MM-dd}"
+                               class="form-control" />
+                        <span asp-validation-for="FechaAlta"
+                              class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    El precio pactado se obtiene automáticamente de la tarifa
+                    vigente al registrar el servicio.
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Regresar
+                    </a>
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Registrar Servicio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const urlDirecciones = '@Url.Action("ObtenerDirecciones", "ContratoServicios")';
+        const urlPlanes = '@Url.Action("ObtenerPlanes", "ContratoServicios")';
+        const urlTarifas = '@Url.Action("ObtenerTarifas", "ContratoServicios")';
+
+        const contrato = document.getElementById("ContratoId");
+        const direccion = document.getElementById("DireccionId");
+        const servicio = document.getElementById("ServicioId");
+        const plan = document.getElementById("PlanId");
+        const tarifa = document.getElementById("TarifaId");
+        const precio = document.getElementById("PrecioMensual");
+
+        function limpiarSelect(select, texto) {
+            select.innerHTML = "";
+            select.add(new Option(texto, ""));
+        }
+
+        async function cargarDirecciones(preservar = false) {
+            const seleccionado = preservar ? direccion.value : "";
+
+            limpiarSelect(direccion, "Seleccione una dirección");
+            direccion.disabled = true;
+
+            limpiarSelect(tarifa, "Seleccione una tarifa");
+            precio.value = "";
+
+            if (!contrato.value) return;
+
+            try {
+                const response = await fetch(
+                    `${urlDirecciones}?contratoId=${contrato.value}`
+                );
+
+                if (!response.ok) throw new Error("Error al cargar direcciones");
+
+                const datos = await response.json();
+
+                datos.forEach(d => {
+                    const opcion = new Option(d.texto, d.id);
+                    opcion.dataset.zonaId = d.zonaId;
+
+                    if (String(d.id) === String(seleccionado)) {
+                        opcion.selected = true;
+                    }
+
+                    direccion.add(opcion);
+                });
+
+                direccion.disabled = false;
+
+                if (preservar && direccion.value) {
+                    await cargarTarifas(true);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("No fue posible cargar las direcciones.");
+            }
+        }
+
+        async function cargarPlanes(preservar = false) {
+            const seleccionado = preservar ? plan.value : "";
+
+            limpiarSelect(plan, "Seleccione un plan");
+            plan.disabled = true;
+
+            limpiarSelect(tarifa, "Seleccione una tarifa");
+            precio.value = "";
+
+            if (!servicio.value) return;
+
+            try {
+                const response = await fetch(
+                    `${urlPlanes}?servicioId=${servicio.value}`
+                );
+
+                if (!response.ok) throw new Error("Error al cargar planes");
+
+                const datos = await response.json();
+
+                datos.forEach(p => {
+                    const opcion = new Option(p.nombre, p.id);
+
+                    if (String(p.id) === String(seleccionado)) {
+                        opcion.selected = true;
+                    }
+
+                    plan.add(opcion);
+                });
+
+                plan.disabled = false;
+
+                if (preservar && plan.value) {
+                    await cargarTarifas(true);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("No fue posible cargar los planes.");
+            }
+        }
+
+        async function cargarTarifas(preservar = false) {
+            const seleccionado = preservar ? tarifa.value : "";
+
+            limpiarSelect(tarifa, "Seleccione una tarifa");
+            precio.value = "";
+
+            const zonaId = direccion.selectedOptions[0]?.dataset.zonaId;
+
+            if (!plan.value || !zonaId) return;
+
+            try {
+                const response = await fetch(
+                    `${urlTarifas}?planId=${plan.value}&zonaId=${zonaId}`
+                );
+
+                if (!response.ok) throw new Error("Error al cargar tarifas");
+
+                const datos = await response.json();
+
+                const hoy = document.getElementById("FechaAlta").value;
+
+                datos.forEach(t => {
+                    // Mostrar únicamente tarifas vigentes en la fecha de alta.
+                    if (t.vigenciaDesde > hoy ||
+                        (t.vigenciaHasta && t.vigenciaHasta < hoy)) {
+                        return;
+                    }
+
+                    const opcion = new Option(
+                        `Q ${Number(t.precio).toFixed(2)}`,
+                        t.id
+                    );
+
+                    if (String(t.id) === String(seleccionado)) {
+                        opcion.selected = true;
+                    }
+
+                    tarifa.add(opcion);
+                });
+
+                actualizarPrecio();
+            } catch (error) {
+                console.error(error);
+                alert("No fue posible cargar las tarifas.");
+            }
+        }
+
+        function actualizarPrecio() {
+            precio.value = tarifa.value
+                ? tarifa.selectedOptions[0].text
+                : "";
+        }
+
+        contrato.addEventListener("change", () => cargarDirecciones());
+        direccion.addEventListener("change", () => cargarTarifas());
+        servicio.addEventListener("change", () => cargarPlanes());
+        plan.addEventListener("change", () => cargarTarifas());
+        tarifa.addEventListener("change", actualizarPrecio);
+
+        // Inicializar los datos cuando se vuelve al formulario
+        // después de una validación fallida.
+        cargarDirecciones(true);
+    </script>
+}
+

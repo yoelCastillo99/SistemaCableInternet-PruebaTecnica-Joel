@@ -1,0 +1,96 @@
+﻿@model SistemaCableInternet.BLL.Models.Direccion
+
+@{
+    ViewData["Title"] = "Editar Dirección";
+}
+
+<div class="container mt-4">
+
+    <h2>Editar Dirección de Instalación</h2>
+    <p class="text-muted">
+        Modifique los datos de la dirección seleccionada.
+    </p>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="DireccionId" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Contrato</label>
+
+                    <select asp-for="ContratoId"
+                            class="form-select"
+                            asp-items="ViewBag.Contratos">
+
+                        <option value="">Seleccione un contrato</option>
+
+                    </select>
+
+                    <span asp-validation-for="ContratoId"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Zona de cobertura</label>
+
+                    <select asp-for="ZonaId"
+                            class="form-select"
+                            asp-items="ViewBag.Zonas">
+
+                        <option value="">Seleccione una zona</option>
+
+                    </select>
+
+                    <span asp-validation-for="ZonaId"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DireccionTexto" class="form-label">
+                        Dirección física
+                    </label>
+
+                    <textarea asp-for="DireccionTexto"
+                              class="form-control"
+                              rows="3"
+                              maxlength="500"></textarea>
+
+                    <span asp-validation-for="DireccionTexto"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <hr />
+
+                <button type="submit" class="btn btn-primary">
+                    Guardar Cambios
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
